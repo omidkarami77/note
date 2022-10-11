@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:note/task.dart';
-import 'package:note/task_type.dart';
-import 'package:note/utility.dart';
+
+import 'package:note/utility/utility.dart';
 import 'package:time_pickerr/time_pickerr.dart';
+
+import '../data/task.dart';
+import '../widget/task_type_item.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -151,7 +153,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         _selectedTaskTypeitem = index;
                       });
                     },
-                    child: TaskTypeItemList(
+                    child: TaskTypeItem(
                       taskType: getTaskTypeList()[index],
                       index: index,
                       selectedItemList: _selectedTaskTypeitem,
@@ -168,7 +170,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 onPressed: () {
                   String taskTitle = titleEditing.text;
                   String taskSubtitle = subEditing.text;
-                  addTask(taskTitle, taskSubtitle);
+                  addTask(
+                    taskTitle,
+                    taskSubtitle,
+                  );
                   Navigator.of(context).pop();
                 },
                 child: Text(
@@ -182,35 +187,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   addTask(String taskTitle, String taskSubtitle) {
-    var task = Task(title: taskTitle, subtitle: taskSubtitle, dateTime: _time!);
+    var task = Task(
+        title: taskTitle,
+        subtitle: taskSubtitle,
+        dateTime: _time!,
+        taskType: getTaskTypeList()[_selectedTaskTypeitem]);
     box.add(task);
-    print(box.get(8)!.title);
-  }
-}
-
-class TaskTypeItemList extends StatelessWidget {
-  TaskTypeItemList(
-      {super.key,
-      required this.taskType,
-      required this.index,
-      required this.selectedItemList});
-  TaskType taskType;
-  int index;
-  int selectedItemList;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(
-              color: (selectedItemList == index)
-                  ? Colors.green
-                  : Colors.transparent,
-              width: 2),
-          borderRadius: BorderRadius.all(Radius.circular(18))),
-      width: 140,
-      margin: EdgeInsets.all(8),
-      child:
-          Column(children: [Image.asset(taskType.image), Text(taskType.title)]),
-    );
   }
 }

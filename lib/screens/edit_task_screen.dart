@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:note/task.dart';
+
+import 'package:note/utility/utility.dart';
 import 'package:time_pickerr/time_pickerr.dart';
+
+import '../data/task.dart';
+import '../widget/task_type_item.dart';
 
 class EditTaskScreen extends StatefulWidget {
   Task task;
@@ -18,19 +22,26 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   TextEditingController? subEditing;
   DateTime? _time;
   final box = Hive.box<Task>('taskBox');
-
+  int? _selectedTaskTypeitem = 1;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     titleEditing = TextEditingController(text: widget.task.title);
     subEditing = TextEditingController(text: widget.task.subtitle);
+
     focusTask1.addListener(() {
       setState(() {});
     });
     focusTask2.addListener(() {
       setState(() {});
     });
+
+    var index = getTaskTypeList().indexWhere((element) {
+      return element.taskTypeEnum == widget.task.taskType.taskTypeEnum;
+    });
+
+    _selectedTaskTypeitem = index;
   }
 
   @override
@@ -41,7 +52,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
               child: Column(
         children: [
           SizedBox(
-            height: 50,
+            height: 20,
           ),
           Padding(
             padding: EdgeInsets.only(right: 44, left: 44),
@@ -76,7 +87,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
             ),
           ),
           SizedBox(
-            height: 100,
+            height: 10,
           ),
           Padding(
             padding: EdgeInsets.only(right: 44, left: 44),
@@ -131,6 +142,26 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
               _time = time;
             },
           ),
+          Container(
+            height: 190,
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: getTaskTypeList().length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        _selectedTaskTypeitem = index;
+                      });
+                    },
+                    child: TaskTypeItem(
+                      taskType: getTaskTypeList()[index],
+                      index: index,
+                      selectedItemList: _selectedTaskTypeitem!,
+                    ),
+                  );
+                }),
+          ),
           Spacer(),
           Padding(
             padding: EdgeInsets.only(bottom: 10),
@@ -157,6 +188,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     widget.task.title = taskTitle;
     widget.task.subtitle = taskSubtitle;
     widget.task.dateTime = _time!;
+    widget.task.taskType = getTaskTypeList()[_selectedTaskTypeitem!];
     widget.task.save();
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
-import 'package:note/edit_task_screen.dart';
-import 'package:note/task.dart';
+
+import '../data/task.dart';
+import '../screens/edit_task_screen.dart';
 
 class TaskWidget extends StatefulWidget {
   Task task;
@@ -64,15 +65,23 @@ class _TaskWidgetState extends State<TaskWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Checkbox(
-                      value: isBoxChecked,
-                      onChanged: (isChecked) {
-                        setState(() {
-                          isBoxChecked = isChecked!;
-                          widget.task.isDone = isBoxChecked;
-                          widget.task.save();
-                        });
-                      },
+                    Transform.scale(
+                      scale: 1.2,
+                      child: Checkbox(
+                        checkColor: Colors.white,
+                        activeColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
+                        value: isBoxChecked,
+                        onChanged: (isChecked) {
+                          setState(() {
+                            isBoxChecked = isChecked!;
+                            widget.task.isDone = isBoxChecked;
+                            widget.task.save();
+                          });
+                        },
+                      ),
                     ),
                     Text(widget.task.title.toString())
                   ],
@@ -89,7 +98,7 @@ class _TaskWidgetState extends State<TaskWidget> {
           SizedBox(
             width: 15,
           ),
-          Image.asset("images/workout.png"),
+          Image.asset(widget.task.taskType.image),
         ],
       ),
     );
@@ -141,7 +150,8 @@ class _TaskWidgetState extends State<TaskWidget> {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
-              child: Row(children: [
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Text(
                   "ویرایش",
                   style: TextStyle(color: Color(0xff18DAA3)),

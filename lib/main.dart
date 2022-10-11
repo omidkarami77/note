@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:note/add_task_screen.dart';
-import 'package:note/task.dart';
+import 'package:note/screens/home_screen.dart';
 
-import 'home_screen.dart';
+import 'data/task.dart';
+import 'data/task_type.dart';
+import 'data/type_enum.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
   var box = await Hive.openBox('names');
   Hive.registerAdapter(TaskAdapter());
+  Hive.registerAdapter(TaskTypeAdapter());
+  Hive.registerAdapter(TaskTypeEnumAdapter());
+
   await Hive.openBox<Task>('taskBox');
 
   runApp(Application());
